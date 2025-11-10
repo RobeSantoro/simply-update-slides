@@ -40,17 +40,15 @@ const context = await esbuild.context({
 	sourcemap: prod ? false : "inline",
 	treeShaking: true,
 	outfile: "dist/main.js",
-	minify: prod,
 });
 
-// Ensure dist directory exists
 const distDir = "dist";
-if (!fs.existsSync(distDir)) {
-	fs.mkdirSync(distDir, { recursive: true });
-}
 
-// Copy manifest.json and styles.css to dist
 function copyFiles() {
+	if (!fs.existsSync(distDir)) {
+		fs.mkdirSync(distDir, { recursive: true });
+	}
+
 	const filesToCopy = ["manifest.json", "styles.css"];
 	for (const file of filesToCopy) {
 		const srcPath = path.join(process.cwd(), file);
@@ -67,8 +65,7 @@ if (prod) {
 	copyFiles();
 	process.exit(0);
 } else {
-	// Copy files on initial build
-	copyFiles();
-	
 	await context.watch();
+	// Initial copy for dev mode
+	context.rebuild().then(copyFiles);
 }

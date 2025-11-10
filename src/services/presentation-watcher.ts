@@ -23,6 +23,7 @@ export class PresentationWatcher {
 		if (!this.settings.enabled) {
 			return [];
 		}
+		console.log("[Watcher] Starting watcher.");
 
 		// Create event handlers and return event refs
 		const modifyRef = this.app.vault.on("modify", (file: TFile) => {
@@ -31,11 +32,21 @@ export class PresentationWatcher {
 
 		const fileOpenRef = this.app.workspace.on("file-open", (file: TFile | null) => {
 			if (file) {
+				console.log(`[Watcher] Watched file changed to: ${file.path}`);
 				this.watchedFile = file;
 			}
 		});
 
-		return [modifyRef, fileOpenRef];
+		let lastKnownPresentationState = this.isInPresentationMode();
+		const layoutChangeRef = this.app.workspace.on("layout-change", () => {
+			const currentPresentationState = this.isInPresentationMode();
+			if (currentPresentationState !== lastKnownPresentationState) {
+				console.log(`[Watcher] Presentation mode state changed to: ${currentPresentationState}`);
+				lastKnownPresentationState = currentPresentationState;
+			}
+		});
+
+		return [modifyRef, fileOpenRef, layoutChangeRef];
 	}
 
 	/**
@@ -63,19 +74,27 @@ export class PresentationWatcher {
 	 * Handle file modification event
 	 */
 	private handleFileModify(file: TFile): void {
+		console.log(`[Watcher] handleFileModify triggered for: ${file.path}`);
 		// Only process markdown files
 		if (file.extension !== "md") {
+			console.log(`[Watcher] File is not markdown, skipping.`);
 			return;
 		}
 
 		// Check if we're in presentation mode
 		if (!this.isInPresentationMode()) {
+			console.log(`[Watcher] Not in presentation mode, skipping.`);
 			return;
 		}
 
 		// Check if the modified file is the currently open file
 		const activeFile = this.app.workspace.getActiveFile();
-		if (!activeFile || activeFile.path !== file.path) {
+		if (!activeFile) {
+			console.log(`[Watcher] No active file, skipping.`);
+			return;
+		}
+		if (activeFile.path !== file.path) {
+			console.log(`[Watcher] Modified file (${file.path}) is not the active file (${activeFile.path}), skipping.`);
 			return;
 		}
 
@@ -84,7 +103,9 @@ export class PresentationWatcher {
 			window.clearTimeout(this.debounceTimer);
 		}
 
+		console.log(`[Watcher] Conditions met. Debouncing refresh for ${this.settings.debounceDelay}ms.`);
 		this.debounceTimer = window.setTimeout(() => {
+			console.log(`[Watcher] Debounce timer finished. Refreshing presentation.`);
 			this.refreshPresentation();
 			this.debounceTimer = null;
 		}, this.settings.debounceDelay);
