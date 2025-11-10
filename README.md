@@ -1,16 +1,42 @@
-# Obsidian Sample Plugin
+# Simply Update Slides
 
-This is a sample plugin for Obsidian (https://obsidian.md).
+An Obsidian plugin that enables live updates to your presentation slides while in Presentation mode. Edit your markdown files using VS Code or any other external editor, and see your changes reflected in real-time during your presentation.
 
-This project uses TypeScript to provide type checking and documentation.
-The repo depends on the latest plugin API (obsidian.d.ts) in TypeScript Definition format, which contains TSDoc comments describing what it does.
+## Features
 
-This sample plugin demonstrates some of the basic functionality the plugin API can do.
-- Adds a ribbon icon, which shows a Notice when clicked.
-- Adds a command "Open Sample Modal" which opens a Modal.
-- Adds a plugin setting tab to the settings page.
-- Registers a global click event and output 'click' to the console.
-- Registers a global interval which logs 'setInterval' to the console.
+- **Live Slide Updates**: Automatically refreshes slide content when the underlying markdown file is modified
+- **External Editor Support**: Use your favorite markdown editor (VS Code, Sublime Text, etc.) while presenting in Obsidian
+- **Seamless Integration**: Works with Obsidian's native Presentation mode
+- **Non-Intrusive**: Lightweight plugin that runs in the background without disrupting your presentation flow
+
+## Use Cases
+
+- Edit and refine slides during a live presentation
+- Collaborate with others who update the markdown file while you present
+- Make quick fixes or additions without exiting Presentation mode
+- Test and iterate on presentation content in real-time
+
+## How to Use
+
+1. **Install the plugin** from Obsidian's Community Plugins, or manually install it (see below)
+2. **Enable the plugin** in Settings → Community plugins
+3. **Open a markdown file** with slide content (use `---` to separate slides)
+4. **Enter Presentation mode** (default shortcut or via command palette)
+5. **Edit your markdown file** using VS Code or any external editor
+6. **Watch your slides update** automatically in the presentation view
+
+The plugin works silently in the background—no additional configuration needed!
+
+## Manual Installation
+
+1. Download the latest release (`main.js`, `manifest.json`, and `styles.css`)
+2. Create a folder named `simply-update-slides` in your vault's `.obsidian/plugins/` directory
+3. Copy the downloaded files into this folder
+4. Reload Obsidian and enable the plugin in Settings
+
+---
+
+## For Developers
 
 ## First time developing plugins?
 
@@ -44,16 +70,18 @@ Quick starting guide for new plugin devs:
 - Make sure you have a `README.md` file in the root of your repo.
 - Make a pull request at https://github.com/obsidianmd/obsidian-releases to add your plugin.
 
-## How to use
+## Development Setup
 
-- Clone this repo.
-- Make sure your NodeJS is at least v16 (`node --version`).
-- `npm i` or `yarn` to install dependencies.
-- `npm run dev` to start compilation in watch mode.
-
-## Manually installing the plugin
-
-- Copy over `main.js`, `styles.css`, `manifest.json` to your vault `VaultFolder/.obsidian/plugins/your-plugin-id/`.
+- Clone this repo
+- Make sure your NodeJS is at least v16 (`node --version`)
+- Run `npm i` to install dependencies
+- Run `npm run dev` to start compilation in watch mode
+- The build outputs to `dist/` folder containing `main.js`, `manifest.json`, and `styles.css`
+- Create a symlink from your vault's plugin folder to the `dist` folder:
+  ```bash
+  ln -s /path/to/simply-update-slides/dist /path/to/vault/.obsidian/plugins/simply-update-slides
+  ```
+  Or manually copy the files from `dist/` to `VaultFolder/.obsidian/plugins/simply-update-slides/`
 
 ## Improve code quality with eslint (optional)
 - [ESLint](https://eslint.org/) is a tool that analyzes your code to quickly find problems. You can run ESLint against your plugin to find common bugs and ways to improve your code. 

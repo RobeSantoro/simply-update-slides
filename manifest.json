@@ -1,11 +1,10 @@
 {
-	"id": "sample-plugin",
-	"name": "Sample Plugin",
+	"id": "simply-update-slides",
+	"name": "Simply Update Slides",
 	"version": "1.0.0",
 	"minAppVersion": "0.15.0",
-	"description": "Demonstrates some of the capabilities of the Obsidian API.",
-	"author": "Obsidian",
-	"authorUrl": "https://obsidian.md",
-	"fundingUrl": "https://obsidian.md/pricing",
-	"isDesktopOnly": false
+	"description": "Live updates to presentation slides while in Presentation mode. Edit markdown files with VS Code or any external editor and see changes reflected in real-time.",
+	"author": "Robe Santoro",
+	"authorUrl": "",
+	"isDesktopOnly": true
 }
