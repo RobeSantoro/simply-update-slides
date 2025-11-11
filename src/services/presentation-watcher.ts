@@ -1,4 +1,4 @@
-import { App, TFile, MarkdownView, EventRef } from "obsidian";
+import { App, TFile, EventRef } from "obsidian";
 import { SimplyUpdateSlidesSettings } from "../settings";
 
 /**
@@ -8,7 +8,6 @@ export class PresentationWatcher {
 	private app: App;
 	private settings: SimplyUpdateSlidesSettings;
 	private debounceTimer: number | null = null;
-	private watchedFile: TFile | null = null;
 
 	constructor(app: App, settings: SimplyUpdateSlidesSettings) {
 		this.app = app;
@@ -30,23 +29,7 @@ export class PresentationWatcher {
 			this.handleFileModify(file);
 		});
 
-		const fileOpenRef = this.app.workspace.on("file-open", (file: TFile | null) => {
-			if (file) {
-				console.log(`[Watcher] Watched file changed to: ${file.path}`);
-				this.watchedFile = file;
-			}
-		});
-
-		let lastKnownPresentationState = this.isInPresentationMode();
-		const layoutChangeRef = this.app.workspace.on("layout-change", () => {
-			const currentPresentationState = this.isInPresentationMode();
-			if (currentPresentationState !== lastKnownPresentationState) {
-				console.log(`[Watcher] Presentation mode state changed to: ${currentPresentationState}`);
-				lastKnownPresentationState = currentPresentationState;
-			}
-		});
-
-		return [modifyRef, fileOpenRef, layoutChangeRef];
+		return [modifyRef];
 	}
 
 	/**
@@ -56,17 +39,6 @@ export class PresentationWatcher {
 		if (this.debounceTimer !== null) {
 			window.clearTimeout(this.debounceTimer);
 			this.debounceTimer = null;
-		}
-		this.watchedFile = null;
-	}
-
-	/**
-	 * Update settings
-	 */
-	public updateSettings(settings: SimplyUpdateSlidesSettings): void {
-		this.settings = settings;
-		if (!this.settings.enabled) {
-			this.stop();
 		}
 	}
 
@@ -103,68 +75,6 @@ export class PresentationWatcher {
 			this.refreshPresentation();
 			this.debounceTimer = null;
 		}, this.settings.debounceDelay);
-	}
-
-	/**
-	 * Check if Obsidian is currently in presentation mode
-	 */
-	private isInPresentationMode(): boolean {
-		// Get the active markdown view
-		const activeView = this.app.workspace.getActiveViewOfType(MarkdownView);
-		if (!activeView) {
-			return false;
-		}
-
-		// Check if the view is in preview mode (presentation mode uses preview)
-		if (!activeView.previewMode) {
-			return false;
-		}
-
-		// Check if presentation mode is active by looking for reveal.js container
-		// Presentation mode uses reveal.js which adds specific DOM elements
-		const container = activeView.containerEl;
-		if (this.hasPresentationClass(container)) {
-			return true;
-		}
-
-		// Also check the preview mode container
-		const previewContainer = container.querySelector(".markdown-preview-view");
-		if (previewContainer && this.hasPresentationClass(previewContainer as HTMLElement)) {
-			return true;
-		}
-
-		return false;
-	}
-
-	/**
-	 * Check if an element has presentation-related classes or is inside a presentation container
-	 */
-	private hasPresentationClass(element: HTMLElement): boolean {
-		// Check for reveal.js presentation mode indicators
-		// Obsidian's presentation mode uses reveal.js which adds specific DOM structure
-		const revealContainer = element.closest(".reveal");
-		if (revealContainer) {
-			return true;
-		}
-
-		// Check for presentation mode data attributes
-		if (element.hasAttribute("data-presentation-mode")) {
-			return true;
-		}
-
-		// Check if the element is inside a presentation viewport
-		const presentationViewport = element.closest(".reveal-viewport");
-		if (presentationViewport) {
-			return true;
-		}
-
-		// Check for reveal.js slides container
-		const slidesContainer = element.closest(".reveal .slides");
-		if (slidesContainer) {
-			return true;
-		}
-
-		return false;
 	}
 
 	/**
