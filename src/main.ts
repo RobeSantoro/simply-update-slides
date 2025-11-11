@@ -1,6 +1,15 @@
 import { Plugin } from 'obsidian';
 import { PresentationWatcher } from './services/presentation-watcher';
-import { SimplyUpdateSlidesSettings, DEFAULT_SETTINGS } from './settings';
+
+export interface SimplyUpdateSlidesSettings {
+	enabled: boolean;
+	debounceDelay: number; // milliseconds to wait before refreshing after file change
+}
+
+export const DEFAULT_SETTINGS: SimplyUpdateSlidesSettings = {
+	enabled: true,
+	debounceDelay: 300, // 300ms debounce to avoid excessive refreshes
+};
 
 export default class SimplyUpdateSlidesPlugin extends Plugin {
     settings: SimplyUpdateSlidesSettings;
@@ -27,9 +36,5 @@ export default class SimplyUpdateSlidesPlugin extends Plugin {
 
     async loadSettings() {
         this.settings = Object.assign({}, DEFAULT_SETTINGS, await this.loadData());
-    }
-
-    async saveSettings() {
-        await this.saveData(this.settings);
     }
 }

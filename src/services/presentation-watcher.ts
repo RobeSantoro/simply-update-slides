@@ -1,5 +1,5 @@
 import { App, TFile, EventRef } from "obsidian";
-import { SimplyUpdateSlidesSettings } from "../settings";
+import { SimplyUpdateSlidesSettings } from "../main";
 
 /**
  * Watches for file changes and refreshes presentation view when files are modified externally
