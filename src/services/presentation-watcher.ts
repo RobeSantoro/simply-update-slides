@@ -1,4 +1,4 @@
-import { App, TFile, MarkdownView, WorkspaceLeaf, EventRef } from "obsidian";
+import { App, TFile, MarkdownView, EventRef } from "obsidian";
 import { SimplyUpdateSlidesSettings } from "../settings";
 
 /**
@@ -78,12 +78,6 @@ export class PresentationWatcher {
 		// Only process markdown files
 		if (file.extension !== "md") {
 			console.log(`[Watcher] File is not markdown, skipping.`);
-			return;
-		}
-
-		// Check if we're in presentation mode
-		if (!this.isInPresentationMode()) {
-			console.log(`[Watcher] Not in presentation mode, skipping.`);
 			return;
 		}
 
@@ -177,36 +171,14 @@ export class PresentationWatcher {
 	 * Refresh the presentation view
 	 */
 	private refreshPresentation(): void {
-		const activeView = this.app.workspace.getActiveViewOfType(MarkdownView);
-		if (!activeView || !activeView.previewMode) {
-			return;
-		}
-
-		try {
-			// Force a re-render of the preview mode
-			// This will update the presentation with the latest file content
-			activeView.previewMode.rerender(true);
-		} catch (error) {
-			console.error("Error refreshing presentation:", error);
-			// Fallback: try refreshing the leaf
-			this.refreshLeaf(activeView.leaf);
-		}
-	}
-
-	/**
-	 * Refresh a specific leaf (fallback method)
-	 */
-	private refreshLeaf(leaf: WorkspaceLeaf): void {
-		try {
-			// Get the current view state
-			const viewState = leaf.getViewState();
-			
-			// Re-set the view state to trigger a refresh
-			// This forces Obsidian to re-render the view with updated content
-			leaf.setViewState(viewState, { focus: false });
-		} catch (error) {
-			console.error("Error refreshing presentation leaf:", error);
-		}
+		// Simulate 'Escape' key press to exit presentation mode
+		document.dispatchEvent(new KeyboardEvent('keydown', { key: 'Escape' }));
+	
+		// Wait a moment for Obsidian to exit presentation mode
+		setTimeout(() => {
+			// Start presentation mode F5
+			document.dispatchEvent(new KeyboardEvent('keydown', { key: 'F5' }));
+		}, 100); // 100ms delay
 	}
 }
 

@@ -16,7 +16,7 @@ If your plugin does not need CSS, delete this file.
 
 /* font size */
 .reveal {
-	font-size: 1em;
+	font-size: 1.35em;
 	/* for mobile use 1.5em */
 }
 
@@ -35,6 +35,7 @@ If your plugin does not need CSS, delete this file.
 	overflow-x: hidden !important;
 	overflow-y: auto !important;
 	pointer-events: auto !important;
+	text-align: left !important;
 }
 
 
