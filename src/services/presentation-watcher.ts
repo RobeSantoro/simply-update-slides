@@ -81,6 +81,18 @@ export class PresentationWatcher {
 	 * Refresh the presentation view
 	 */
 	private refreshPresentation(): void {
+		// Check if we are in presentation mode
+		const presentationContainer = document.querySelector('.slides-container .reveal');
+		if (!presentationContainer) {
+			console.log('[Watcher] Presentation container not found. Assuming not in presentation mode.');
+			return;
+		}
+
+		const pastSlides = presentationContainer.querySelectorAll('section.past');
+		const slideIndex = pastSlides.length;
+		console.log(`[Watcher] Current slide index: ${slideIndex}`);
+
+
 		// Simulate 'Escape' key press to exit presentation mode
 		document.dispatchEvent(new KeyboardEvent('keydown', { key: 'Escape' }));
 	
@@ -88,6 +100,20 @@ export class PresentationWatcher {
 		setTimeout(() => {
 			// Start presentation mode F5
 			document.dispatchEvent(new KeyboardEvent('keydown', { key: 'F5' }));
+
+			// Wait for presentation to load before navigating
+			setTimeout(() => {
+				console.log(`[Watcher] Navigating to slide index ${slideIndex}.`);
+				const navigateRightButton = document.querySelector('button.navigate-right') as HTMLElement;
+				if (navigateRightButton) {
+					for (let i = 0; i < slideIndex; i++) {
+						navigateRightButton.click();
+					}
+				} else {
+					console.log('[Watcher] Could not find the right navigation button.');
+				}
+			}, 500); // Delay to allow presentation to load
+
 		}, 100); // 100ms delay
 	}
 }
