@@ -115,7 +115,7 @@ If your plugin does not need CSS, delete this file.
 
 .reveal table {
 	/* font-size: 2em;   */
-	width: 80%;
+	width: 100%;
 }
 
 .reveal table>thead>tr>th {
@@ -151,4 +151,17 @@ td {
 .navigate-left {
 	/* bottom: 1.4em !important; */
 	right: 15em !important;
+}
+
+@media print {
+	.reveal .slides section {
+		display: flex;
+		flex-direction: column;
+		justify-content: center;
+		min-height: 95vh;
+	}
+
+	hr {
+		page-break-after: always;
+	}
 }
