@@ -6,7 +6,7 @@ This plugin lets you edit your markdown slides in an external editor and see the
 
 ## How the hæck works
 
-Look, Obsidian doesn't have an API for messing with presentations. So, I went with a full-on brute force method.
+Obsidian doesn't have an API for messing with presentations. So, I went with a full-on brute force method.
 
 Here's the deal:
 
